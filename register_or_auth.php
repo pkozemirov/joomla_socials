@@ -2,8 +2,9 @@
 	$credentials = array('username'=>$user_data->id, 'password'=>$user_data->id);
 	$options = array('remember'=>true);
 		
-	//выполняем авторизацию
+	// try login ... if false, create new user 
 	if(!$app->login($credentials, $options)){
+		
 		$userData = array( 
 		    'name' => $user_data->name,
 		    'username' => $user_data->id,
@@ -12,15 +13,16 @@
 		    'groups' => array(2)
 		);
 		
-		// проверка сохранения данных в базе
+		// check datas
 		$user = new JUser;
-
 		if(!$user->bind($userData)) {
 			throw new Exception("Could not bind data. Error: " . $user->getError());
 		}
 		if (!$user->save()) {
 			throw new Exception("Could not save user. Error: " . $user->getError());
 		}
+		
+		// try login
 		if(!$app->login($credentials, $options)){
 			die('Произошла непредвиденная ошибка. Пожалуйста, попробуйте еще раз.');
 		}
